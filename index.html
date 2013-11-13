@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
+<title>Jamendo Cast</title>
+</head>
+
+<body>
+<h1>Jamendo Cast</h1>
+<label for="user-tags">What kind of music do you want?</label>
+<input type="text" id="user-tags" autofocus="true"></input>
+<br/>
+<br/>
+<audio id="jamendo-song" controls>
+Whoops, this uses HTML5 audio tag
+</audio>
+<a id="next-song-link" href="#">Next song</a>
+<br/>
+<a id="download-song-link" href="#">Download this song</a>
+<select id="file-format">
+  <option value="ogg1/">Ogg</option>
+  <option value="mp31/">96kbps MP3</option>
+  <option value="mp32/">VBR MP3</option>
+  <option value="flac/">Flac</option>
+</select>
+
+<script>
+    // fucking emacs indentation
+var pos = 0;
+
+function nextSong() {
+    var audioElement = document.getElementById("jamendo-song");
+    pos++;
+    var jamendoreq = new XMLHttpRequest();
+    var tags = document.getElementById("user-tags").value;
+    jamendoreq.open("GET", "http://api.jamendo.com/v3.0/tracks?client_id=fe86c7db&format=json&order=popularity_month&limit=1&offset="+pos+"&tags=" + encodeURIComponent(tags) + "&audioformat=ogg");
+    jamendoreq.onreadystatechange = function() {
+	if (jamendoreq.readyState == 4) {
+	    if (jamendoreq.status == 200) {
+		audioElement.src = JSON.parse(jamendoreq.response).results[0].audio;
+		audioElement.play();
+	    } else {
+		alert("Whoops something went wrong");
+		nextSong();
+	    }
+	}
+    }
+    jamendoreq.send();
+}
+
+function downloadSong() {
+    var audioElement = document.getElementById("jamendo-song");
+    window.open(audioElement.src.slice(0, -5)+document.getElementById("file-format").value);
+}
+
+document.getElementById("jamendo-song").addEventListener('ended', nextSong);
+document.getElementById("user-tags").onblur = nextSong;
+document.getElementById("next-song-link").onclick = nextSong;
+document.getElementById("download-song-link").onclick = downloadSong;
+</script>
+</body> </html>
