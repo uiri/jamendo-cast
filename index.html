@@ -16,6 +16,10 @@ Whoops, this uses HTML5 audio tag
 </audio>
 <a id="next-song-link" href="#">Next song</a>
 <br/>
+    Volume:
+   <input type="button" onClick="UpVolume()" value="+">
+   <input type="button" onClick="DownVolume()" value="-">
+<br/>
 <a id="download-song-link" href="#">Download this song</a>
 <select id="file-format">
   <option value="ogg1/">Ogg</option>
@@ -27,6 +31,15 @@ Whoops, this uses HTML5 audio tag
 <script>
     // fucking emacs indentation
 var pos = 0;
+
+function UpVolume() {
+    document.getElementById("jamendo-song").volume += 0.05
+}
+
+
+function DownVolume() {
+    document.getElementById("jamendo-song").volume -= 0.05
+}
 
 function nextSong() {
     var audioElement = document.getElementById("jamendo-song");
