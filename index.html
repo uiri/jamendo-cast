@@ -41,12 +41,27 @@ function DownVolume() {
     document.getElementById("jamendo-song").volume -= 0.05
 }
 
+var setCookie = false
+
 function nextSong() {
     var audioElement = document.getElementById("jamendo-song");
     pos++;
+    var tehcookies = document.cookie.split(";")
+    var cookiedoc = {};
+    for (var i = 0;i<tehcookies.length;i++) {
+        var keyandval = tehcookies[i].split('=');
+        cookiedoc[keyandval[0].trim()] = keyandval[1];
+    }
     var jamendoreq = new XMLHttpRequest();
-    var tags = document.getElementById("user-tags").value;
-    jamendoreq.open("GET", "http://api.jamendo.com/v3.0/tracks?client_id=fe86c7db&format=json&order=popularity_month&limit=1&offset="+pos+"&tags=" + encodeURIComponent(tags) + "&audioformat=ogg");
+    var tags = encodeURIComponent(document.getElementById("user-tags").value);
+    if (!setCookie && cookiedoc["genre"] == tags) {
+        pos = cookiedoc["pos"] - 0
+        setCookie = true;
+    }
+    document.cookie = "pos="+pos
+    document.cookie = "genre="+tags
+    console.log(cookiedoc["genre"])
+    jamendoreq.open("GET", "http://api.jamendo.com/v3.0/tracks?client_id=fe86c7db&format=json&order=popularity_month&limit=1&offset="+pos+"&tags=" + tags + "&audioformat=ogg");
     jamendoreq.onreadystatechange = function() {
 	if (jamendoreq.readyState == 4) {
 	    if (jamendoreq.status == 200) {
